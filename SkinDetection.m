@@ -10,8 +10,8 @@ picGood = imread(picPathGood);
 picDark = imread(picPathDark);
 figure, montage({picGood,picPathDark})
 
-skinDetect(picGood)
-skinDetect(picDark)
+goodSkin = skinDetect(picGood);
+darkSkin = skinDetect(picDark);
 
 %RGB values
 R=picDark(:,:,1);
@@ -52,12 +52,19 @@ threshold = 255*graythresh(diffhist);
 %Find pixels above the threshold
 aboveThresh = Y >threshold;
 figure,imshow(aboveThresh)%Well, this just got interesting...
+%%
+test1 = aboveThresh - darkSkin;%here is what I'm masking out 
+test2 = aboveThresh+darkSkin;
+figure,montage({test1,test2})
+
+edgeLapTest = laplacianFilter2(test1);
+figure,imshow(edgeLapTest)
+
+skin = darkSkin+edgeLapTest;
+figure,imshow(skin)
 
 
-
-
-
-function skinDetect(pic)
+function skin = skinDetect(pic)
     %given code in the assignment details.
     %All this does is detect skin pixels using RGB
     ims1 = (pic(:,:,1)>95) & (pic(:,:,2)>40) & (pic(:,:,3)>20);
@@ -65,7 +72,15 @@ function skinDetect(pic)
     ims3 = (pic(:,:,1)-pic(:,:,2)>15) & (pic(:,:,1)>pic(:,:,3));
     ims = ims1 & ims2 & ims3;
     figure,imshow(ims)
-    %skin = ims;
+    skin = ims;
+end
+function lapLacian = laplacianFilter2(usePic)
+    laplFilt=[-1 -1 -1; 
+              -1 8 -1; 
+              -1 -1 -1];
+    %laplacianFilt = filter2(usePic,laplFilt,'self');
+    lapLacian = conv2(usePic,laplFilt,'same');%This was lapLacianFilt
+   
 end
 
 
