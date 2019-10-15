@@ -42,19 +42,19 @@ figure,plot(h)
 %Loop to find the threshold
 var=zeros(256,1); 
 index2=0;%Get sum.
-for index = 9 : length(h)-9%This is all that the mask fits in.
+for index = 20 : length(h)-20
     %text = length(h)-20;%Subtract 20 because I take off 10 from back and 10 from front
-    index2 = index2 + h(index-1)+h(index-2)+h(index-4)+h(index-8) - h(index) + h(index+1)+h(index+2)+h(index+4)+h(index+8);
+    index2 = index2 + h(index-1)+h(index-2)+h(index-4)+h(index-8) - h(index) +h(index+1)+h(index+2)+h(index+4)+h(index+8);
 end
 %%
-threshold = index2.*10;%I should find the local min that is the maximum min.
+threshold = 70;%index2/10;%I know that there has to be a better way.  But I'm unsure how to get a good threshold using the histogram information.
 
 %%
 
 [rowX, colY] = size(Yone);
 for row=1:rowX
     for col=1:colY 
-        if Yone(row,col)> threshold %textThat %I know that textThat needs to be (70)
+        if Yone(row,col)> threshold %textThat %I know that textThat needs to be (.6)
             Yone(row,col) = 0;
         end
     end
@@ -70,9 +70,10 @@ mask=logical(Yone);
 
 
 
-tem=picDark.*uint8(skin);
-tem=tem.*uint8(mask);
-figure,imshow(tem)
+tem=picDark.*unit8(skin)
+finalFinal = picDark .* mask;
+figure,imshow(finalFinal)
+
 
 
 
